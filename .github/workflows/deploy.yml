@@ -1,4 +1,4 @@
-name: Deploy Ghost Protocol to Github Pages
+name: Deploy Ghost Protocol to GitHub Pages
 
 on:
   push:
@@ -22,36 +22,37 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7
 
-      - name: Set up Node.js 
+      - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
           node-version: '24'
           cache: npm
-      
+
       - name: Install dependencies
         run: npm ci
 
       - name: Build the game
-        run: npm run build 
+        run: npm run build
 
       - name: Verify the build
         run: test -f dist/index.html
 
-      - name: upload the Pages artidact
+      - name: Upload the Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
           name: github-pages
           path: ./dist
-deploy:
-  needs: build
-  runs-on: ubuntu-latest
-  environment:
-    name: github-pages
-    url: ${{ steps.deployment.outputs.page_url}}
 
-  steps:
-    - name: Deploy to Github Pages
-      id: deployment
-      uses: actions/deploy-page@v5
-      with:
-        artifact_name: github-pages
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+        with:
+          artifact_name: github-pages
