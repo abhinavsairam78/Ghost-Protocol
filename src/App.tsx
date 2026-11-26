@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { loadProgress, saveProgress, type ReportEnding } from './saveProgress';
 import { firstCase } from './cases/firstCase';
+import './App.css';
 
 type DesktopApp = 'files' | 'messages' | 'calendar' | 'evidence';
 
@@ -82,14 +83,22 @@ export default function App() {
         Restart Case
       </button>
 
-      <nav aria-label="Desktop apps">
-        <button onClick={() => setActiveApp('files')}>Files</button>
-        <button onClick={() => setActiveApp('messages')}>
-          Messages{messageCount > 0 ? ' (${messagecount})' : ''}
+      <nav className="taskbar" aria-label="Desktop apps">
+        <button type="button" aria-pressed={activeApp === 'files'}
+          onClick={() => setActiveApp('files')}>
+          Files
         </button>
-        <button onClick={() => setActiveApp('calendar')}>Calendar</button>
-        <button onClick={() => setActiveApp('evidence')}>
-          Evidence{savedEvidenceIds.length > 0 ? ` (${savedEvidenceIds.length})` : ''}
+        <button type="button" aria-pressed={activeApp === 'messages'}
+          onClick={() => setActiveApp('messages')}>
+          Messages{messageCount > 0 ? ' (${messageCount})' : ''}
+        </button>
+        <button type="button" aria-pressed={activeApp === 'calendar'}
+          onClick={() => setActiveApp('calendar')}>
+          Calender
+        </button>
+        <button type="button" aria-pressed={activeApp === 'evidence'}
+          onClick={() => setActiveApp('evidence')}>
+          Evidence{savedEvidenceIds.length > 0 ? ' (${savedEvidenceIds.length})' : ''}
         </button>
       </nav>
 
