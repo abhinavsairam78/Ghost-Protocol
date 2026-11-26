@@ -4,6 +4,18 @@ export const firstCase = {
         title: 'last-note.txt',
         text: 'I left at 9:17. Check the calender.',
     },
+    archiveDocuments: [
+        {
+            id: 'handoff-procedure',
+            title: 'handoff-procedure.txt',
+            text: 'Bring the archive index to the handoff. The receiving archivist signs the transfer log before taking custody.',
+        },
+        {
+            id: 'catalogue-log',
+            title: 'catalogue-log.txt',
+            text: 'Three entries are missing from the catalogue. Their reference numbers are still present in the printed index.',
+        },
+    ],
     message: {
         unlockAfterOpening: 'last-note',
         text: 'If you found the note, check who moved thee meeting.',

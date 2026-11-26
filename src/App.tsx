@@ -15,7 +15,10 @@ export default function App() {
   const [activeApp, setActiveApp] = useState<DesktopApp>('files');
   const [initialProgress] = useState(loadProgress);
 
-  const [openedDocumentId, setOpenedDocumentId] = useState(
+  const [openedDocumentId, setOpenedDocumentId] = useState<string | null>(
+    initialProgress.openedDocumentId ?? null,
+  );
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(
     initialProgress.openedDocumentId ?? null,
   );
   const [savedEvidenceIds, setSavedEvidenceIds] = useState(
@@ -52,7 +55,19 @@ export default function App() {
     reportEnding,
   ]);
 
-  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, } = firstCase;
+  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, } = firstCase;
+  const archiveFiles = [caseDocument, ...archiveDocuments];
+  const selectedDocument = archiveFiles.find(
+    (file) => file.id === selectedDocumentId,
+  );
+
+  function openDocument(id: string) {
+    setSelectedDocumentId(id);
+
+    if (id === caseDocument.id) {
+      setOpenedDocumentId(id);
+    }
+  }
   const revisionSaved = savedEvidenceIds.includes(meeting.revisionId);
   const draftSaved = savedEvidenceIds.includes(recoveredDraft.id);
   const testedTheory = theories.find((theory) => theory.id === testedTheoryId);
@@ -67,6 +82,7 @@ export default function App() {
 
     setActiveApp('files');
     setOpenedDocumentId(null);
+    setSelectedDocumentId(null);
     setSavedEvidenceIds([]);
     setTestedTheoryId(null);
     setIncludeRevision(false);
@@ -119,15 +135,28 @@ export default function App() {
         </header>
 
         {activeApp === 'files' ? (
-          <section>
-            <button onClick={() => setOpenedDocumentId(caseDocument.id)}>
-              {caseDocument.title}
-            </button>
-            {openedDocumentId === caseDocument.id && (
+          <section className="file-browser">
+            <ul className="file-list" aria-label="Archive files">
+              {archiveFiles.map((file) => (
+                <li key={file.id}>
+                  <button
+                    type="button"
+                    aria-pressed={selectedDocumentId === file.id}
+                    onClick={() => openDocument(file.id)}
+                  >
+                    {file.title}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {selectedDocument ? (
               <article className="open-document">
-                <h3>{caseDocument.title}</h3>
-                <p>{caseDocument.text}</p>
+                <h3>{selectedDocument.title}</h3>
+                <p>{selectedDocument.text}</p>
               </article>
+            ) : (
+              <p>Select a file to read it.</p>
             )}
           </section>
         ) : activeApp === 'messages' ? (

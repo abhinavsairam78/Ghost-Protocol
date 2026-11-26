@@ -126,7 +126,7 @@
   background: #111a27;
 }
 
-.app-window[data-app="calender"] details {
+.app-window[data-app="calendar"] details {
   padding: 0.8rem;
   border: 1px solid #50647a;
   border-radius: 0.5rem;
@@ -137,4 +137,40 @@
   border: 1px solid #344559;
   border-radius: 0.5rem;
   background: #111a27;
+}
+
+.file-browser {
+  display: grid;
+  grid-template-columns: minmax(11rem, 1fr) minmax(0, 2fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.file-list {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.file-list button {
+  width: 100%;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+
+.file-list button[aria-pressed="true"] {
+  border-color: #79dec2;
+  background: #193c36;
+}
+
+.file-browser > .open-document {
+  margin-top: 0;
+}
+
+@media (max-width: 38rem) {
+  .file-browser {
+    grid-template-columns: 1fr;
+  }
 }
