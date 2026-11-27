@@ -54,6 +54,11 @@ export const firstCase = {
         title: 'east-vault-log.txt',
         text: '9:24 AM - Archivist signed in. 9:27 AM - Transfer logged for A-17, A-22, and A-31. Destination: Restoration Annex. Receiving signature: blank.',
     },
+    annexReply: {
+        id: 'restoration-annex-reply',
+        title: 'Reply from the Restoration Annex',
+        text: '9:42 AM - Recods A-17, A-22, and A-31 received. Courier badge: C-04. The receipt has no archivist signature. Our copy of the intake recod is attached below.',
+    },
     theories: [
         {
             id: 'meeting-moved',

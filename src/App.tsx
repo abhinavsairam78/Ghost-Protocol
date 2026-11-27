@@ -61,7 +61,7 @@ export default function App() {
     includeVaultLog,
   ]);
 
-  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, vaultLog, } = firstCase;
+  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, vaultLog, annexReply, } = firstCase;
 
   function openDocument(id: string) {
     setSelectedDocumentId(id);
@@ -82,6 +82,7 @@ export default function App() {
     (file) => file.id === selectedDocumentId,
   );
   const vaultLogSaved = savedEvidenceIds.includes(vaultLog.id);
+  const annexReplySaved = savedEvidenceIds.includes(annexReply.id);
   const testedTheory = theories.find((theory) => theory.id === testedTheoryId);
   function saveEvidence(id: string) {
     setSavedEvidenceIds((ids) => (ids.includes(id) ? ids : [...ids, id]));
@@ -104,7 +105,7 @@ export default function App() {
     setReportEnding(null);
   }
   const messageUnlocked = openedDocumentId === message.unlockAfterOpening;
-  const messageCount = Number(messageUnlocked) + Number(revisionSaved);
+  const messageCount = Number(messageUnlocked) + Number(revisionSaved) + Number(vaultLogSaved);
 
   return (
     <main className="desktop">
@@ -209,6 +210,11 @@ export default function App() {
                     {vaultLogSaved ? 'Evidence saved' : 'Save log as evidence'}
                   </button>
                 )}
+                {selectedDocument.id === vaultLog.id && vaultLogSaved && !annexReplySaved && (
+                  <button type="button" onClick={() => setActiveApp('messages')}>
+                    Open the Annex reply in messages
+                  </button>
+                )}
               </article>
             ) : (
               <p>Select a file to read it.</p>
@@ -227,6 +233,19 @@ export default function App() {
                   onClick={() => saveEvidence(recoveredDraft.id)}
                 >
                   {draftSaved ? 'Evidence saved' : 'Save draft as evidence'}
+                </button>
+              </article>
+            )}
+            {vaultLogSaved && (
+              <article>
+                <h3>{annexReply.title}</h3>
+                <p>{annexReply.text}</p>
+                <button
+                  type="button"
+                  disabled={annexReplySaved}
+                  onClick={() => saveEvidence(annexReply.id)}
+                >
+                  {annexReplySaved ? 'Evidence saved' : 'Save Annex receipt as evidence'}
                 </button>
               </article>
             )}
@@ -289,14 +308,14 @@ export default function App() {
             )}
             {vaultLogSaved && (
               <article>
-                <h3>{vaultLog.title}</h3>
+                <h3>East Vault transfer log</h3>
                 <p>{vaultLog.text}</p>
               </article>
             )}
-            {vaultLogSaved && (
+            {annexReplySaved && (
               <article>
-                <h3>East Vault transfer log</h3>
-                <p>{vaultLog.text}</p>
+                <h3>Restoration Annex intake receipt</h3>
+                <p>{annexReply.text}</p>
               </article>
             )}
             <h3>Test a theory</h3>
