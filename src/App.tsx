@@ -37,6 +37,9 @@ export default function App() {
   const [includeVaultLog, setIncludeVaultLog] = useState(
     initialProgress.includeVaultLog ?? false,
   );
+  const [includeAnnexReceipt, setIncludeAnnexReceipt] = useState(
+    initialProgress.includeAnnexReceipt ?? false,
+  );
   const [reportEnding, setReportEnding] = useState<ReportEnding | null>(
     initialProgress.reportEnding ?? null,
   );
@@ -50,6 +53,7 @@ export default function App() {
       includeDraft,
       reportEnding,
       includeVaultLog,
+      includeAnnexReceipt,
     });
   }, [
     openedDocumentId,
@@ -59,6 +63,7 @@ export default function App() {
     includeDraft,
     reportEnding,
     includeVaultLog,
+    includeAnnexReceipt,
   ]);
 
   const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, vaultLog, annexReply, } = firstCase;
@@ -103,6 +108,7 @@ export default function App() {
     setIncludeDraft(false);
     setIncludeVaultLog(false);
     setReportEnding(null);
+    setIncludeAnnexReceipt(false);
   }
   const messageUnlocked = openedDocumentId === message.unlockAfterOpening;
   const messageCount = Number(messageUnlocked) + Number(revisionSaved) + Number(vaultLogSaved);
@@ -395,6 +401,21 @@ export default function App() {
                 </label>
               </div>
 
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={includeAnnexReceipt}
+                    disabled={!annexReplySaved}
+                    onChange={(event) => {
+                      setIncludeAnnexReceipt(event.target.checked);
+                      setReportEnding(null);
+                    }}
+                  />
+                  Restoration Annex receipt
+                </label>
+              </div>
+
               <button type='submit' disabled={!revisionSaved || !includeRevision}>
                 submit report
               </button>
@@ -404,10 +425,14 @@ export default function App() {
               {reportEnding && (
                 <>
                   <p>{endings[reportEnding]}</p>
-
-                  {vaultLogSaved && includeVaultLog && <p>{endings.vaultFinding}</p>}</>
+                  {vaultLogSaved && includeVaultLog && (
+                    <p>{endings.vaultFinding}</p>
+                  )}
+                  {annexReplySaved && includeAnnexReceipt && (
+                    <p>{endings.annexFinding}</p>
+                  )}
+                </>
               )}
-
             </div>
           </section>
         )}

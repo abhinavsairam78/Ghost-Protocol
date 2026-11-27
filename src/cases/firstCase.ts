@@ -41,6 +41,7 @@ export const firstCase = {
         partial: 'The report confirms Mira moved the handoff. Her reason remains unknown.',
         supported: 'The report confirms Mira moved the handoff. Her recovered draft says she wanted to give the laptop owner time to copy the archive. The owners whereabouts are still unkown.',
         vaultFinding: 'The East Vault log lists the Restoration Annex as the destination of the three missing record. The receiving signature is blank, so the log cannot confirm delivery or place the archivist at the Annex.',
+        annexFinding: 'The Restoration Annex receipt confirms that records A-17, A-22, and A-31 arrived at 9:42 AM. It lists courier badge C-04. The archivists whereabout remain unknown',
     },
     catalogueCheck: {
         id: 'catalogue-cross-check',

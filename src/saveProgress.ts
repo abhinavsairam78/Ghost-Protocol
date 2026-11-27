@@ -7,6 +7,7 @@ export type SavedProgress = {
   includeRevision: boolean;
   includeDraft: boolean;
   includeVaultLog: boolean;
+  includeAnnexReceipt: boolean;
   reportEnding: ReportEnding | null;
 };
 
