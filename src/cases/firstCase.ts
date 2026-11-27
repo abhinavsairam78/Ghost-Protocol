@@ -13,7 +13,12 @@ export const firstCase = {
         {
             id: 'catalogue-log',
             title: 'catalogue-log.txt',
-            text: 'Three entries are missing from the catalogue. Their reference numbers are still present in the printed index.',
+            text: 'Missing from the digital caalogue: A-17, A-22, A-31. Check the printed index for their storage location.',
+        },
+        {
+            id: 'printed-index',
+            title: 'printed-index',
+            text: 'A-17 - East Vault. A-19 - North Vault. A-22 - East Vault. A-28 - West Vault. A-31 - East Vault.',
         },
     ],
     message: {
@@ -35,6 +40,13 @@ export const firstCase = {
     endings: {
         partial: 'The report confirms Mira moved the handoff. Her reason remains unknown.',
         supported: 'The report confirms Mira moved the handoff. Her recovered draft says she wanted to give the laptop owner time to copy the archive. The owners whereabouts are still unkown.',
+    },
+    catalogueCheck: {
+        id: 'catalogue-cross-check',
+        question: 'Where were all three missing records stored?',
+        locations: ['North Vault', 'East Vault', 'West Vault'],
+        answer: 'East Vault',
+        evidence: 'The printed index places all three missing records in the East Vault.',
     },
     theories: [
         {

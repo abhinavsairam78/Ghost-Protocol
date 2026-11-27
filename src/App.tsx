@@ -24,6 +24,7 @@ export default function App() {
   const [savedEvidenceIds, setSavedEvidenceIds] = useState(
     initialProgress.savedEvidenceIds ?? [],
   );
+  const [catalogueFeedback, setCatalogueFeedback] = useState('');
   const [testedTheoryId, setTestedTheoryId] = useState(
     initialProgress.testedTheoryId ?? null,
   );
@@ -55,7 +56,7 @@ export default function App() {
     reportEnding,
   ]);
 
-  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, } = firstCase;
+  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, } = firstCase;
   const archiveFiles = [caseDocument, ...archiveDocuments];
   const selectedDocument = archiveFiles.find(
     (file) => file.id === selectedDocumentId,
@@ -70,6 +71,7 @@ export default function App() {
   }
   const revisionSaved = savedEvidenceIds.includes(meeting.revisionId);
   const draftSaved = savedEvidenceIds.includes(recoveredDraft.id);
+  const catalogueEvidenceSaved = savedEvidenceIds.includes(catalogueCheck.id);
   const testedTheory = theories.find((theory) => theory.id === testedTheoryId);
   function saveEvidence(id: string) {
     setSavedEvidenceIds((ids) => (ids.includes(id) ? ids : [...ids, id]));
@@ -84,6 +86,7 @@ export default function App() {
     setOpenedDocumentId(null);
     setSelectedDocumentId(null);
     setSavedEvidenceIds([]);
+    setCatalogueFeedback('');
     setTestedTheoryId(null);
     setIncludeRevision(false);
     setIncludeDraft(false);
@@ -154,6 +157,33 @@ export default function App() {
               <article className="open-document">
                 <h3>{selectedDocument.title}</h3>
                 <p>{selectedDocument.text}</p>
+                {selectedDocument.id === 'printed-index' && (
+                  <fieldset disabled={catalogueEvidenceSaved}>
+                    <legend>{catalogueCheck.question}</legend>
+
+                    {catalogueCheck.locations.map((location) => (
+                      <button
+                        key={location}
+                        type="button"
+                        onClick={() => {
+                          if (location !== catalogueCheck.answer) {
+                            setCatalogueFeedback('Check the three refence numbers again');
+                            return;
+                          }
+
+                          saveEvidence(catalogueCheck.id);
+                          setCatalogueFeedback('');
+                        }}
+                      >
+                        {location}
+                      </button>
+                    ))}
+
+                    <p role="status">
+                      {catalogueEvidenceSaved ? 'Evidence saved.' : catalogueFeedback}
+                    </p>
+                  </fieldset>
+                )}
               </article>
             ) : (
               <p>Select a file to read it.</p>
@@ -225,6 +255,13 @@ export default function App() {
                 <p>{recoveredDraft.text}</p>
               </article>
             )}
+            {catalogueEvidenceSaved && (
+              <article>
+                <h3>Catalogue cross-check</h3>
+                <p>{catalogueCheck.evidence}</p>
+              </article>
+            )
+            }
             <h3>Test a theory</h3>
             {!revisionSaved && <p>Save the calender revision to test a theory.</p>}
 
