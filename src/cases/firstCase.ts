@@ -42,6 +42,10 @@ export const firstCase = {
         supported: 'The report confirms Mira moved the handoff. Her recovered draft says she wanted to give the laptop owner time to copy the archive. The owners whereabouts are still unkown.',
         vaultFinding: 'The East Vault log lists the Restoration Annex as the destination of the three missing record. The receiving signature is blank, so the log cannot confirm delivery or place the archivist at the Annex.',
         annexFinding: 'The Restoration Annex receipt confirms that records A-17, A-22, and A-31 arrived at 9:42 AM. It lists courier badge C-04. The archivists whereabout remain unknown',
+        courierFinding:
+            'The Annex clerk checked Tara Bose’s staff ID and recorded her delivering the three missing records at 9:42 AM using badge C-04.',
+        completeFinding:
+            'The records are accounted for. The last record placing the archivist in person is the 9:24 AM East Vault sign-in. Their whereabouts after that remain unknown.',
     },
     catalogueCheck: {
         id: 'catalogue-cross-check',
@@ -69,6 +73,16 @@ export const firstCase = {
         answer: 'Dev Malik',
         evidence: 'The courier roster assigns badge C-04 to Dev Malik. The Annex receipt records that badge for the 9:42 AM delivery.',
     },
+    courierStatement: {
+        id: 'dev-courier-statement',
+        title: 'Statement from Dev Malik',
+        text: 'C-04 is assigned to me. At 9:30 I lent it to Tara Bose because her badge would not scan. I stayed at the dispatch desk. I did not see who signed in at the Annex.',
+    },
+    annexSignIn: {
+        id: 'annex-sign-in',
+        title: 'annex-sign-in.txt',
+        text: '9:42 AM - Tara Bose delivered A-17, A-22, and A-31. She presented badge C-04. I checked her staff ID before accepting the records. - Leena Shah, Annex intake clerk',
+    },
     theories: [
         {
             id: 'meeting-moved',
@@ -79,6 +93,13 @@ export const firstCase = {
             id: 'protect-the-archive',
             claim: 'Mira Sen moved the handoff to delay the laptop owner.',
             feedback: 'Inconclusive. The revision shows who changed the time, but gives no reason.',
+        },
+        {
+            id: 'dev-delivered-records',
+            claim: 'Dev Malik delivered the records himself.',
+            feedback:
+                'Inconclusive. The roster assigns C-04 to Dev, and the receipt records that badge. Neither records who wore it.',
+
         },
     ],
     briefing: {

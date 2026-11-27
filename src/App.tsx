@@ -41,6 +41,9 @@ export default function App() {
   const [includeAnnexReceipt, setIncludeAnnexReceipt] = useState(
     initialProgress.includeAnnexReceipt ?? false,
   );
+  const [includeAnnexSignIn, setIncludeAnnexSignIn] = useState(
+    initialProgress.includeAnnexSignIn ?? false,
+  );
   const [reportEnding, setReportEnding] = useState<ReportEnding | null>(
     initialProgress.reportEnding ?? null,
   );
@@ -55,6 +58,7 @@ export default function App() {
       reportEnding,
       includeVaultLog,
       includeAnnexReceipt,
+      includeAnnexSignIn,
     });
   }, [
     openedDocumentId,
@@ -65,9 +69,10 @@ export default function App() {
     reportEnding,
     includeVaultLog,
     includeAnnexReceipt,
+    includeAnnexSignIn,
   ]);
 
-  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, vaultLog, annexReply, courierRoster, } = firstCase;
+  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, vaultLog, annexReply, courierRoster, courierStatement, annexSignIn, } = firstCase;
 
   function openDocument(id: string) {
     setSelectedDocumentId(id);
@@ -82,6 +87,16 @@ export default function App() {
   const vaultLogSaved = savedEvidenceIds.includes(vaultLog.id);
   const annexReplySaved = savedEvidenceIds.includes(annexReply.id);
   const courierMatchSaved = savedEvidenceIds.includes(courierRoster.id);
+  const courierStatementSaved = savedEvidenceIds.includes(courierStatement.id);
+  const annexSignInSaved = savedEvidenceIds.includes(annexSignIn.id);
+  const reportComplete =
+    reportEnding === 'supported' &&
+    vaultLogSaved &&
+    includeVaultLog &&
+    annexReplySaved &&
+    includeAnnexReceipt &&
+    annexSignInSaved &&
+    includeAnnexSignIn;
 
   const archiveFiles = [caseDocument, ...archiveDocuments];
   if (catalogueEvidenceSaved) {
@@ -90,6 +105,10 @@ export default function App() {
 
   if (annexReplySaved) {
     archiveFiles.push(courierRoster);
+  }
+
+  if (courierStatementSaved) {
+    archiveFiles.push(annexSignIn);
   }
 
   const selectedDocument = archiveFiles.find(
@@ -118,9 +137,10 @@ export default function App() {
     setIncludeVaultLog(false);
     setReportEnding(null);
     setIncludeAnnexReceipt(false);
+    setIncludeAnnexSignIn(false);
   }
   const messageUnlocked = openedDocumentId === message.unlockAfterOpening;
-  const messageCount = Number(messageUnlocked) + Number(revisionSaved) + Number(vaultLogSaved);
+  const messageCount = Number(messageUnlocked) + Number(revisionSaved) + Number(vaultLogSaved) + Number(courierMatchSaved);
 
   return (
     <main className="desktop">
@@ -258,6 +278,22 @@ export default function App() {
                     </p>
                   </fieldset>
                 )}
+                {selectedDocument.id === courierRoster.id &&
+                  courierMatchSaved &&
+                  !courierStatementSaved && (
+                    <button type="button" onClick={() => setActiveApp('messages')}>
+                      Read Dev&apos;s statement in Messages
+                    </button>
+                  )}
+                {selectedDocument.id === annexSignIn.id && (
+                  <button
+                    type="button"
+                    disabled={annexSignInSaved}
+                    onClick={() => saveEvidence(annexSignIn.id)}
+                  >
+                    {annexSignInSaved ? 'Evidence saved' : 'Save sign-in sheet as evidence'}
+                  </button>
+                )}
               </article>
             ) : (
               <p>Select a file to read it.</p>
@@ -299,6 +335,30 @@ export default function App() {
                     }}
                   >
                     Open courier Roster
+                  </button>
+                )}
+              </article>
+            )}
+            {courierMatchSaved && (
+              <article>
+                <h3>{courierStatement.title}</h3>
+                <p>{courierStatement.text}</p>
+                <button
+                  type="button"
+                  disabled={courierStatementSaved}
+                  onClick={() => saveEvidence(courierStatement.id)}
+                >
+                  {courierStatementSaved ? 'Evidence saved.' : 'Save statement as evidence'}
+                </button>
+                {courierStatementSaved && !annexSignInSaved && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openDocument(annexSignIn.id);
+                      setActiveApp('files');
+                    }}
+                  >
+                    Open Annex Sign-in
                   </button>
                 )}
               </article>
@@ -378,6 +438,18 @@ export default function App() {
                 <p>{courierRoster.evidence}</p>
               </article>
             )}
+            {courierStatementSaved && (
+              <article>
+                <h3>{courierStatement.title}</h3>
+                <p>{courierStatement.text}</p>
+              </article>
+            )}
+            {annexSignInSaved && (
+              <article>
+                <h3>Annex sign-in sheet</h3>
+                <p>{annexSignIn.text}</p>
+              </article>
+            )}
             <h3>Test a theory</h3>
             {!revisionSaved && <p>Save the calender revision to test a theory.</p>}
 
@@ -393,9 +465,15 @@ export default function App() {
             ))}
 
             <p role="status">
-              {testedTheory?.id === 'protect-the-archive' && draftSaved
-                ? 'Supported. The revision confirms the timing change, and the draft explains Miras stated reason.'
-                : testedTheory?.feedback}
+              {testedTheory?.id === 'dev-delivered-records' && annexSignInSaved
+                ? 'Contradicted. The Annex clerk checked Taras staff ID and recorded her as the courier for the 9:42 AM delivery.'
+                : testedTheory?.id === 'dev-delivered-records' && courierStatementSaved
+                  ? 'Disputed. dev says Tara borrowed C-04. Check the Annex sign-in sheet for independent confirmation.'
+                  : testedTheory?.id === 'dev-delivered-records' && !courierMatchSaved
+                    ? 'Check the Annex receipt against the courier roster first.'
+                    : testedTheory?.id === 'protect-the-archive' && draftSaved
+                      ? 'Supported. The revision confirms the timing change, and the draft explains Miras stated reason.'
+                      : testedTheory?.feedback}
             </p>
             <h3>Case report</h3>
             <p>Attach the evidence you want to submit.</p>
@@ -470,6 +548,21 @@ export default function App() {
                 </label>
               </div>
 
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={includeAnnexSignIn}
+                    disabled={!annexSignInSaved}
+                    onChange={(event) => {
+                      setIncludeAnnexSignIn(event.target.checked);
+                      setReportEnding(null);
+                    }}
+                  />
+                  Annex sign-in sheet
+                </label>
+              </div>
+
               <button type='submit' disabled={!revisionSaved || !includeRevision}>
                 submit report
               </button>
@@ -478,13 +571,13 @@ export default function App() {
             <div role="status">
               {reportEnding && (
                 <>
+                  <h4>{reportComplete ? 'Case 01 complete' : 'Report submitted'}</h4>
                   <p>{endings[reportEnding]}</p>
-                  {vaultLogSaved && includeVaultLog && (
-                    <p>{endings.vaultFinding}</p>
-                  )}
-                  {annexReplySaved && includeAnnexReceipt && (
-                    <p>{endings.annexFinding}</p>
-                  )}
+
+                  {vaultLogSaved && includeVaultLog && <p>{endings.vaultFinding}</p>}
+                  {annexReplySaved && includeAnnexReceipt && <p>{endings.annexFinding}</p>}
+                  {annexSignInSaved && includeAnnexSignIn && <p>{endings.courierFinding}</p>}
+                  {reportComplete && <p>{endings.completeFinding}</p>}
                 </>
               )}
             </div>

@@ -8,6 +8,7 @@ export type SavedProgress = {
   includeDraft: boolean;
   includeVaultLog: boolean;
   includeAnnexReceipt: boolean;
+  includeAnnexSignIn: boolean;
   reportEnding: ReportEnding | null;
 };
 
