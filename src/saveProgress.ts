@@ -6,6 +6,7 @@ export type SavedProgress = {
   testedTheoryId: string | null;
   includeRevision: boolean;
   includeDraft: boolean;
+  includeVaultLog: boolean;
   reportEnding: ReportEnding | null;
 };
 

@@ -34,6 +34,9 @@ export default function App() {
   const [includeDraft, setIncludeDraft] = useState(
     initialProgress.includeDraft ?? false,
   );
+  const [includeVaultLog, setIncludeVaultLog] = useState(
+    initialProgress.includeVaultLog ?? false,
+  );
   const [reportEnding, setReportEnding] = useState<ReportEnding | null>(
     initialProgress.reportEnding ?? null,
   );
@@ -46,6 +49,7 @@ export default function App() {
       includeRevision,
       includeDraft,
       reportEnding,
+      includeVaultLog,
     });
   }, [
     openedDocumentId,
@@ -54,6 +58,7 @@ export default function App() {
     includeRevision,
     includeDraft,
     reportEnding,
+    includeVaultLog,
   ]);
 
   const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, vaultLog, } = firstCase;
@@ -95,6 +100,7 @@ export default function App() {
     setTestedTheoryId(null);
     setIncludeRevision(false);
     setIncludeDraft(false);
+    setIncludeVaultLog(false);
     setReportEnding(null);
   }
   const messageUnlocked = openedDocumentId === message.unlockAfterOpening;
@@ -355,12 +361,35 @@ export default function App() {
                 </label>
               </div>
 
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={includeVaultLog}
+                    disabled={!vaultLogSaved}
+                    onChange={(event) => {
+                      setIncludeVaultLog(event.target.checked);
+                      setReportEnding(null);
+                    }}
+                  />
+                  East Vault transfer log
+                </label>
+              </div>
+
               <button type='submit' disabled={!revisionSaved || !includeRevision}>
                 submit report
               </button>
             </form>
 
-            <p role="status">{reportEnding ? endings[reportEnding] : ''}</p>
+            <div role="status">
+              {reportEnding && (
+                <>
+                  <p>{endings[reportEnding]}</p>
+
+                  {vaultLogSaved && includeVaultLog && <p>{endings.vaultFinding}</p>}</>
+              )}
+
+            </div>
           </section>
         )}
       </div>

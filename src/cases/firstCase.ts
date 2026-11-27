@@ -40,6 +40,7 @@ export const firstCase = {
     endings: {
         partial: 'The report confirms Mira moved the handoff. Her reason remains unknown.',
         supported: 'The report confirms Mira moved the handoff. Her recovered draft says she wanted to give the laptop owner time to copy the archive. The owners whereabouts are still unkown.',
+        vaultFinding: 'The East Vault log lists the Restoration Annex as the destination of the three missing record. The receiving signature is blank, so the log cannot confirm delivery or place the archivist at the Annex.',
     },
     catalogueCheck: {
         id: 'catalogue-cross-check',
