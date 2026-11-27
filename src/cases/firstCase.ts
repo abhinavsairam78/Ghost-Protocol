@@ -48,6 +48,11 @@ export const firstCase = {
         answer: 'East Vault',
         evidence: 'The printed index places all three missing records in the East Vault.',
     },
+    vaultLog: {
+        id: 'east-vault-log',
+        title: 'east-vault-log.txt',
+        text: '9:24 AM - Archivist signed in. 9:27 AM - Transfer logged for A-17, A-22, and A-31. Destination: Restoration Annex. Receiving signature: blank.',
+    },
     theories: [
         {
             id: 'meeting-moved',

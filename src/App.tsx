@@ -56,11 +56,7 @@ export default function App() {
     reportEnding,
   ]);
 
-  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, } = firstCase;
-  const archiveFiles = [caseDocument, ...archiveDocuments];
-  const selectedDocument = archiveFiles.find(
-    (file) => file.id === selectedDocumentId,
-  );
+  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, vaultLog, } = firstCase;
 
   function openDocument(id: string) {
     setSelectedDocumentId(id);
@@ -72,6 +68,15 @@ export default function App() {
   const revisionSaved = savedEvidenceIds.includes(meeting.revisionId);
   const draftSaved = savedEvidenceIds.includes(recoveredDraft.id);
   const catalogueEvidenceSaved = savedEvidenceIds.includes(catalogueCheck.id);
+  const archiveFiles = [caseDocument, ...archiveDocuments];
+  if (catalogueEvidenceSaved) {
+    archiveFiles.push(vaultLog);
+  }
+
+  const selectedDocument = archiveFiles.find(
+    (file) => file.id === selectedDocumentId,
+  );
+  const vaultLogSaved = savedEvidenceIds.includes(vaultLog.id);
   const testedTheory = theories.find((theory) => theory.id === testedTheoryId);
   function saveEvidence(id: string) {
     setSavedEvidenceIds((ids) => (ids.includes(id) ? ids : [...ids, id]));
@@ -184,6 +189,20 @@ export default function App() {
                     </p>
                   </fieldset>
                 )}
+                {selectedDocument.id === 'printed-index' && catalogueEvidenceSaved && (
+                  <button type="button" onClick={() => openDocument(vaultLog.id)}>
+                    Open recovered East Vault log
+                  </button>
+                )}
+                {selectedDocument.id === vaultLog.id && (
+                  <button
+                    type="button"
+                    disabled={vaultLogSaved}
+                    onClick={() => saveEvidence(vaultLog.id)}
+                  >
+                    {vaultLogSaved ? 'Evidence saved' : 'Save log as evidence'}
+                  </button>
+                )}
               </article>
             ) : (
               <p>Select a file to read it.</p>
@@ -238,7 +257,10 @@ export default function App() {
           </section>
         ) : (
           <section>
-            {revisionSaved ? (
+            {savedEvidenceIds.length === 0 && (
+              <p>No evidence collected yet.</p>
+            )}
+            {revisionSaved && (
               <article>
                 <h3>{meeting.title} · Calendar revision</h3>
                 <p>
@@ -246,8 +268,6 @@ export default function App() {
                   {meeting.originalTime} to {meeting.currentTime}.
                 </p>
               </article>
-            ) : (
-              <p>No evidence collected yet.</p>
             )}
             {draftSaved && (
               <article>
@@ -260,8 +280,19 @@ export default function App() {
                 <h3>Catalogue cross-check</h3>
                 <p>{catalogueCheck.evidence}</p>
               </article>
-            )
-            }
+            )}
+            {vaultLogSaved && (
+              <article>
+                <h3>{vaultLog.title}</h3>
+                <p>{vaultLog.text}</p>
+              </article>
+            )}
+            {vaultLogSaved && (
+              <article>
+                <h3>East Vault transfer log</h3>
+                <p>{vaultLog.text}</p>
+              </article>
+            )}
             <h3>Test a theory</h3>
             {!revisionSaved && <p>Save the calender revision to test a theory.</p>}
 
