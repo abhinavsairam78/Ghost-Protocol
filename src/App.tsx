@@ -25,6 +25,7 @@ export default function App() {
     initialProgress.savedEvidenceIds ?? [],
   );
   const [catalogueFeedback, setCatalogueFeedback] = useState('');
+  const [courierFeedback, setCourierFeedback] = useState('');
   const [testedTheoryId, setTestedTheoryId] = useState(
     initialProgress.testedTheoryId ?? null,
   );
@@ -66,7 +67,7 @@ export default function App() {
     includeAnnexReceipt,
   ]);
 
-  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, vaultLog, annexReply, } = firstCase;
+  const { document: caseDocument, message, meeting, theories, recoveredDraft, endings, briefing, archiveDocuments, catalogueCheck, vaultLog, annexReply, courierRoster, } = firstCase;
 
   function openDocument(id: string) {
     setSelectedDocumentId(id);
@@ -78,16 +79,23 @@ export default function App() {
   const revisionSaved = savedEvidenceIds.includes(meeting.revisionId);
   const draftSaved = savedEvidenceIds.includes(recoveredDraft.id);
   const catalogueEvidenceSaved = savedEvidenceIds.includes(catalogueCheck.id);
+  const vaultLogSaved = savedEvidenceIds.includes(vaultLog.id);
+  const annexReplySaved = savedEvidenceIds.includes(annexReply.id);
+  const courierMatchSaved = savedEvidenceIds.includes(courierRoster.id);
+
   const archiveFiles = [caseDocument, ...archiveDocuments];
   if (catalogueEvidenceSaved) {
     archiveFiles.push(vaultLog);
   }
 
+  if (annexReplySaved) {
+    archiveFiles.push(courierRoster);
+  }
+
   const selectedDocument = archiveFiles.find(
     (file) => file.id === selectedDocumentId,
-  );
-  const vaultLogSaved = savedEvidenceIds.includes(vaultLog.id);
-  const annexReplySaved = savedEvidenceIds.includes(annexReply.id);
+  )
+
   const testedTheory = theories.find((theory) => theory.id === testedTheoryId);
   function saveEvidence(id: string) {
     setSavedEvidenceIds((ids) => (ids.includes(id) ? ids : [...ids, id]));
@@ -103,6 +111,7 @@ export default function App() {
     setSelectedDocumentId(null);
     setSavedEvidenceIds([]);
     setCatalogueFeedback('');
+    setCourierFeedback('');
     setTestedTheoryId(null);
     setIncludeRevision(false);
     setIncludeDraft(false);
@@ -221,6 +230,34 @@ export default function App() {
                     Open the Annex reply in messages
                   </button>
                 )}
+
+                {selectedDocument.id === courierRoster.id && (
+                  <fieldset disabled={courierMatchSaved}>
+                    <legend>Who was assigned badge {courierRoster.badge}?</legend>
+
+                    {courierRoster.choices.map((name) => (
+                      <button
+                        key={name}
+                        type="button"
+                        onClick={() => {
+                          if (name !== courierRoster.answer) {
+                            setCourierFeedback('Compare the badge number with the roster.');
+                            return;
+                          }
+
+                          saveEvidence(courierRoster.id);
+                          setCourierFeedback('');
+                        }}
+                      >
+                        {name}
+                      </button>
+                    ))}
+
+                    <p role="status">
+                      {courierMatchSaved ? 'Evidence saved.' : courierFeedback}
+                    </p>
+                  </fieldset>
+                )}
               </article>
             ) : (
               <p>Select a file to read it.</p>
@@ -253,6 +290,17 @@ export default function App() {
                 >
                   {annexReplySaved ? 'Evidence saved' : 'Save Annex receipt as evidence'}
                 </button>
+                {annexReplySaved && !courierMatchSaved && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openDocument(courierRoster.id);
+                      setActiveApp('files');
+                    }}
+                  >
+                    Open courier Roster
+                  </button>
+                )}
               </article>
             )}
           </section>
@@ -322,6 +370,12 @@ export default function App() {
               <article>
                 <h3>Restoration Annex intake receipt</h3>
                 <p>{annexReply.text}</p>
+              </article>
+            )}
+            {courierMatchSaved && (
+              <article>
+                <h3>Courier badge match</h3>
+                <p>{courierRoster.evidence}</p>
               </article>
             )}
             <h3>Test a theory</h3>

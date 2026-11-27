@@ -60,6 +60,15 @@ export const firstCase = {
         title: 'Reply from the Restoration Annex',
         text: '9:42 AM - Recods A-17, A-22, and A-31 received. Courier badge: C-04. The receipt has no archivist signature. Our copy of the intake recod is attached below.',
     },
+    courierRoster: {
+        id: 'courier-roster',
+        title: 'courier-roster.txt',
+        text: 'C-02 - Nila Rao. C-04 - Dev Malik. C-07 - Tara Bose.',
+        badge: 'C-04',
+        choices: ['Nila Rao', 'Dev Malik', 'Tara Bose'],
+        answer: 'Dev Malik',
+        evidence: 'The courier roster assigns badge C-04 to Dev Malik. The Annex receipt records that badge for the 9:42 AM delivery.',
+    },
     theories: [
         {
             id: 'meeting-moved',
